@@ -55,7 +55,7 @@ apt install mecab
 
 
 
-![2019-07-08_15.53.50](/Ubuntu18.04_Setting/2019-07-08_16.15.56.png)
+![2019-07-08_15.53.50](Ubuntu18.04_Setting/2019-07-08_16.15.56.png)
 
 `mecab-jumandic-utf8_7.0-20130310-4_all.deb`　の応答がない…...
 
@@ -164,11 +164,11 @@ perl -p -i.bak -e 's%https?://(?!security)[^ \t]+%http://ftp.jaist.ac.jp/pub/Lin
 
 変換後の設定ファイル
 
-![/etc/apt/sources.list](/Ubuntu18.04_Setting/2019-07-08_17.31.22.png)
+![/etc/apt/sources.list](Ubuntu18.04_Setting/2019-07-08_17.31.22.png)
 
 
 
 無事成功
 
-![成功](/Ubuntu18.04_Setting/2019-07-08_17.47.17.png)
+![成功](Ubuntu18.04_Setting/2019-07-08_17.47.17.png)
 
