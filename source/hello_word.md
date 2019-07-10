@@ -29,5 +29,7 @@ for(let i=0; i<10; i++) {
 
 
 
-![An image](https://github.com/music-brain88/BeginnerTutorial/blob/master/assets/images/sample.png)
+画像は不具合が出る模様
+
+![An image]()
 
