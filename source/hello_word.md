@@ -29,5 +29,5 @@ for(let i=0; i<10; i++) {
 
 
 
-![An image](assets/images/sample.png)
+![An image](https://github.com/music-brain88/BeginnerTutorial/blob/master/assets/images/sample.png)
 
