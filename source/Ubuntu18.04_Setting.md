@@ -7,7 +7,7 @@ excerpt: Ubuntu18.04に Mecabが入らなかった，むしゃくしゃして書
 
 
 
-## 機械学習環境の移行をしたいでござる
+## Dockerの機械学習環境の移行をしたいでござる
 
 
 
@@ -75,9 +75,11 @@ apt install mecab
 
 **うん，リポジトリの方で問題が起きている！こっちではどうしようもないな！**
 
+これはこれで報告するとして
 
 
- ということで
+
+ **mecabは今欲しいんだ！**ということで
 
 
 
@@ -158,6 +160,10 @@ JAISTのサーバに向けることにします．
 perl -p -i.bak -e 's%https?://(?!security)[^ \t]+%http://ftp.jaist.ac.jp/pub/Linux/ubuntu/%g' /etc/apt/sources.list
 ```
 
+上記のコードを実行することで`http://security.ubuntu.com`以外の項目を置換して
+
+
+
 置換前のファイルは以下に格納されるはずです．
 
 `/etc/apt/sources.list.bak`
@@ -172,3 +178,110 @@ perl -p -i.bak -e 's%https?://(?!security)[^ \t]+%http://ftp.jaist.ac.jp/pub/Lin
 
 ![An image](images/Ubuntu18.04_Setting/2019-07-08_17.47.17.png)
 
+
+
+
+
+後はこちら吐き出しておいたこちらを実行
+
+```shell
+pip3 install requests
+pip3 install -r requirements.txt
+rm requirements.txt
+```
+
+
+
+やったね，妙ちゃん！もうすぐ移行ができるよ！
+
+…….
+
+![なんか失敗した画像](images/Ubuntu18.04_Setting/2019-07-09_13.00.44.png)
+
+
+
+`pygobject`とな？
+
+エラーが出てないかログを遡ってみる
+
+
+
+![なんかエラー出てる……](images/Ubuntu18.04_Setting/2019-07-09_13.07.23.png)
+
+
+
+とりあえず，`apt search`して必要なものを見ていく
+
+多分これ入れれば行けると思われ
+
+```shell
+apt install pkg-config \
+		libcairo2-dev \
+		gobject-introspection \
+		libgirepository1.0-dev
+```
+
+
+
+
+
+上記の作業をDockerfileに落としてbuild確認．
+
+成功したので無事移行完了
+
+やったー
+
+``` Dockerfile
+FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu18.04
+
+# JAISTに向ける
+RUN perl -p -i.bak -e 's%https?://(?!security)[^ \t]+%http://ftp.jaist.ac.jp/pub/Linux/ubuntu/%g' /etc/apt/sources.list
+RUN rm -rf /var/lib/apt/lists/*
+RUN apt-get update
+RUN apt-get upgrade -y
+
+RUN apt-get install -y \
+      python3-dev \
+      python3-pip \
+      mecab \
+      libmecab-dev \
+      mecab-ipadic-utf8 \
+      git \
+      curl \
+      make \
+      sudo \
+      pkg-config \
+      libcairo2-dev \
+      gobject-introspection \
+      libgirepository1.0-dev
+
+RUN git clone --depth 1 https://github.com/neologd/mecab-ipadic-neologd.git\
+    && cd mecab-ipadic-neologd\
+    && bin/install-mecab-ipadic-neologd -n -y -a
+
+COPY dictfiles/.userdic.csv /opt/program/.userdic.csv
+RUN /usr/lib/mecab/mecab-dict-index -d /usr/lib/x86_64-linux-gnu/mecab/dic/mecab-ipadic-neologd/ \
+    -u /opt/program/.mda_userdic.csv -f utf-8 -t utf-8 /opt/program/.userdic.csv
+RUN echo "userdic = /opt/program/.mda_userdic.csv" >> /etc/mecabrc
+
+RUN rm -rf /root/.cache
+RUN pip3 install --upgrade pip
+
+COPY ./requirements.txt ./requirements.txt
+
+RUN pip3 install requests
+RUN pip3 install -r requirements.txt
+RUN rm requirements.txt
+```
+
+
+
+
+
+
+
+## 参考リンク
+
+
+
+[apt-getの利用リポジトリを日本サーバーに変更する](https://qiita.com/fkshom/items/53de3a9b9278cd524099)
