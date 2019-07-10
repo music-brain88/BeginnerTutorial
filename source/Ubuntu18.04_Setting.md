@@ -223,6 +223,14 @@ apt install pkg-config \
 
 
 
+![まだエラーが出るのか](images/Ubuntu18.04_Setting/2019-07-09_14.13.56.png)
+
+
+
+`libcairo2-dev`いれましたけど？
+
+> ModuleNotFoundError: No module named 'cairo'
+
 
 
 上記の作業をDockerfileに落としてbuild確認．
