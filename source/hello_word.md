@@ -1,6 +1,6 @@
 ---
 title: Say Hello to the world
-date: 2019-07-08
+date: 2019-07-07
 tags: ["サンプル", "チュートリアル"]
 excerpt: これは抜粋です。
 ---
